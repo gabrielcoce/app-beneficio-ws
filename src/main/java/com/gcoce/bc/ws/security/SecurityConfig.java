@@ -90,6 +90,9 @@ public class SecurityConfig {
         corsConfig.setAllowedMethods(Arrays.asList("GET","POST","PATCH", "PUT", "DELETE", "OPTIONS", "HEAD"));
         corsConfig.setAllowedHeaders(Arrays.asList("Authorization", "Requester-Type"));
         corsConfig.setExposedHeaders(Arrays.asList("X-Get-Header"));
+        corsConfig.addAllowedOrigin("*");
+        corsConfig.addAllowedHeader("*");
+        corsConfig.addAllowedMethod("*");
         corsConfig.setMaxAge(3600L);
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", corsConfig);
