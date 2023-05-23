@@ -1,6 +1,5 @@
-package com.gcoce.bc.ws.security.repositories;
-
-import com.gcoce.bc.ws.security.models.User;
+package com.gcoce.bc.ws.repositories.beneficio;
+import com.gcoce.bc.ws.entities.beneficio.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

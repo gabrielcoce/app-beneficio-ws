@@ -1,4 +1,4 @@
-package com.gcoce.bc.ws.security.models;
+package com.gcoce.bc.ws.entities.beneficio;
 
 public enum ERole {
     ROLE_ADMIN,

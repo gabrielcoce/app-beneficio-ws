@@ -72,6 +72,12 @@ public class GlobalExceptionHandler {
         return new ResponseEntity(error, HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(BeneficioException.class)
+    public final ResponseEntity<Object> handleBeneficioException(BeneficioException ex, HttpServletRequest request){
+        ErrorResponse error = new ErrorResponse(HttpStatus.NOT_ACCEPTABLE, ex.getMessage(), request.getServletPath());
+        return new ResponseEntity(error, HttpStatus.NOT_ACCEPTABLE);
+    }
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, WebRequest request) {
         List<String> details = new ArrayList<>();

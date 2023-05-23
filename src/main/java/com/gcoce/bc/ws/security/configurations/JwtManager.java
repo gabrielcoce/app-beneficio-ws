@@ -1,6 +1,6 @@
 package com.gcoce.bc.ws.security.configurations;
 
-import com.gcoce.bc.ws.security.models.UserDetailsImpl;
+import com.gcoce.bc.ws.entities.beneficio.UserDetailsImpl;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;

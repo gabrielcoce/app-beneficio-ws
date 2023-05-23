@@ -1,7 +1,7 @@
 package com.gcoce.bc.ws.security.configurations;
 
-import com.gcoce.bc.ws.security.models.UserDetailsImpl;
-import com.gcoce.bc.ws.security.services.UserDetailsSvcImpl;
+import com.gcoce.bc.ws.entities.beneficio.UserDetailsImpl;
+import com.gcoce.bc.ws.services.beneficio.UserDetailsSvcImpl;
 import io.jsonwebtoken.ExpiredJwtException;
 import org.apache.commons.lang3.StringUtils;
 import jakarta.servlet.FilterChain;
@@ -13,7 +13,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -27,7 +26,6 @@ public class JwtFilter extends OncePerRequestFilter {
     private JwtManager jwtManager;
     @Autowired
     private UserDetailsSvcImpl userDetailsService;
-
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         final String requestTokenHeader = request.getHeader("Authorization");

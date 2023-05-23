@@ -1,4 +1,4 @@
-package com.gcoce.bc.ws.security.models;
+package com.gcoce.bc.ws.entities.beneficio;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.springframework.security.core.GrantedAuthority;

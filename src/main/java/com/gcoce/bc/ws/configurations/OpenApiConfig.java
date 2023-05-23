@@ -12,7 +12,7 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 @OpenAPIDefinition(info = @Info(title = "Beneficio Web Service", version = "1.0",
-        description = "Documentacion para Beneficio",
+        description = "Documentación del Sistema de Beneficio Cafe",
         contact = @Contact(url = "", name = "Gabriel Coc", email = "gcocestrada@outlook.com")),
         security = {@SecurityRequirement(name = "bearerToken")},
         servers = {@Server(url = "")}

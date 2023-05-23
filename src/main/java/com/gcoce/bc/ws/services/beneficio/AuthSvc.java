@@ -1,18 +1,18 @@
-package com.gcoce.bc.ws.services;
+package com.gcoce.bc.ws.services.beneficio;
 
+import com.gcoce.bc.ws.entities.beneficio.ERole;
+import com.gcoce.bc.ws.entities.beneficio.Role;
+import com.gcoce.bc.ws.entities.beneficio.User;
+import com.gcoce.bc.ws.entities.beneficio.UserDetailsImpl;
 import com.gcoce.bc.ws.exceptions.AuthBadRequestException;
 import com.gcoce.bc.ws.payload.request.LoginRequest;
 import com.gcoce.bc.ws.payload.request.SignupRequest;
 import com.gcoce.bc.ws.payload.response.JwtResponse;
 import com.gcoce.bc.ws.payload.response.SuccessResponse;
+import com.gcoce.bc.ws.repositories.beneficio.RoleRepository;
+import com.gcoce.bc.ws.repositories.beneficio.UserRepository;
 import com.gcoce.bc.ws.security.configurations.JwtManager;
-import com.gcoce.bc.ws.security.models.ERole;
-import com.gcoce.bc.ws.security.models.Role;
-import com.gcoce.bc.ws.security.models.User;
-import com.gcoce.bc.ws.security.models.UserDetailsImpl;
-import com.gcoce.bc.ws.security.repositories.RoleRepository;
-import com.gcoce.bc.ws.security.repositories.UserRepository;
-import com.gcoce.bc.ws.security.services.UserDetailsSvcImpl;
+import com.gcoce.bc.ws.utils.Validations;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -21,15 +21,11 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Service
 public class AuthSvc {
@@ -50,6 +46,7 @@ public class AuthSvc {
         this.authenticationManager = authenticationManager;
         this.jwtUtils = jwtUtils;
         this.userDetailsService = userDetailsService;
+
     }
 
     public ResponseEntity<?> authenticateUserSvc(LoginRequest loginRequest) throws AuthBadRequestException {
@@ -67,17 +64,16 @@ public class AuthSvc {
         /*List<String> roles = userDetails.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.toList());*/
-
         return ResponseEntity.ok(new JwtResponse(jwt));
     }
 
     public ResponseEntity<?> registerUserSvc(SignupRequest signUpRequest) throws AuthBadRequestException {
         String message;
-        if (userRepository.existsByUsername(signUpRequest.getUsername())) {
+        if (existsUserSvc(signUpRequest.getUsername())) {
             message = String.format("El usuario %s ya existe", signUpRequest.getUsername());
             throw new AuthBadRequestException(message);
         }
-        if (userRepository.existsByEmail(signUpRequest.getEmail())) {
+        if (existsEmailSvc(signUpRequest.getEmail())) {
             message = String.format("El email %s ya existe", signUpRequest.getEmail());
             throw new AuthBadRequestException(message);
         }/**/
@@ -133,16 +129,30 @@ public class AuthSvc {
                 });
             }
             user.setRoles(roles);
-            logger.info("user" + user);
+            logger.info("user " + user);
             if (user.getRoles().isEmpty()) {
                 logger.error("rol no valido");
                 throw new AuthBadRequestException("Rol no valido");
             }
             userRepository.save(user);
-            message = String.format("Usuario %s registrado exitosamente ", user.getUsername());
+            message = String.format("Usuario %s a sido registrado exitosamente ", user.getUsername());
             return ResponseEntity.ok(new SuccessResponse(HttpStatus.OK, message));
         } catch (AuthBadRequestException e) {
             throw new AuthBadRequestException(e.getMessage());
         }
+    }
+
+    public boolean existsUserSvc(String user){
+        return userRepository.existsByUsername(user);
+    }
+
+    public boolean existsEmailSvc(String email){
+        return userRepository.existsByEmail(email);
+    }
+
+    public boolean validateUserToken(String bearerToken, String user){
+        String token = bearerToken.substring(7);
+        String userToken = jwtUtils.getUsernameFromToken(token);
+        return Validations.compareStrings(userToken, user);
     }
 }
