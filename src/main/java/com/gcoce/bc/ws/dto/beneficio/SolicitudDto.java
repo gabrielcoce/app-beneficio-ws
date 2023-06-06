@@ -1,4 +1,4 @@
-package com.gcoce.bc.ws.dto.agricultor;
+package com.gcoce.bc.ws.dto.beneficio;
 
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;

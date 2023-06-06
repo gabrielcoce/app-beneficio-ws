@@ -1,13 +1,11 @@
-package com.gcoce.bc.ws.controllers.agricultor;
+package com.gcoce.bc.ws.controllers.beneficio;
 
-import com.gcoce.bc.ws.dto.agricultor.SolicitudDto;
+import com.gcoce.bc.ws.dto.beneficio.SolicitudDto;
 import com.gcoce.bc.ws.services.beneficio.SolicitudSvc;
 import com.gcoce.bc.ws.utils.Constants;
-import jakarta.annotation.security.RolesAllowed;
 import jakarta.validation.Valid;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -16,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
  */
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
-@RequestMapping(value = "/api/agricultor", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = "/api/beneficio/solicitud", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 //@RolesAllowed("ROLE_AGRICULTOR")
 public class SolicitudController {
 

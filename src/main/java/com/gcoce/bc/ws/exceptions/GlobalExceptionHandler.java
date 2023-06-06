@@ -58,13 +58,11 @@ public class GlobalExceptionHandler {
         return new ResponseEntity(error, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
-    /*@ExceptionHandler(RecordNotFoundException.class)
+    @ExceptionHandler(RecordNotFoundException.class)
     public final ResponseEntity<Object> handleUserNotFoundException(RecordNotFoundException ex, HttpServletRequest request) {
-        List<String> details = new ArrayList<>();
-        details.add(ex.getLocalizedMessage());
-        ErrorResponse error = new ErrorResponse(HttpStatus.NOT_FOUND, "Record Not Found", details, request.getServletPath());
+        ErrorResponse error = new ErrorResponse(HttpStatus.NOT_FOUND, ex.getMessage(), request.getServletPath());
         return new ResponseEntity(error, HttpStatus.NOT_FOUND);
-    }*/
+    }
 
     @ExceptionHandler(AuthBadRequestException.class)
     public final ResponseEntity<Object> handleAuthBadRequestException(AuthBadRequestException ex, HttpServletRequest request) {

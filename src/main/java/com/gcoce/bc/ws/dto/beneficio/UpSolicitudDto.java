@@ -1,4 +1,4 @@
-package com.gcoce.bc.ws.dto.agricultor;
+package com.gcoce.bc.ws.dto.beneficio;
 
 import lombok.Getter;
 import lombok.Setter;

@@ -6,6 +6,7 @@ package com.gcoce.bc.ws.utils;
  */
 public class Validations {
 
+
     public static boolean compareStrings(String s, String c){
         return s.equals(c);
     }

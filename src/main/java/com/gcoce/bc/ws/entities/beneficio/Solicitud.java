@@ -1,7 +1,7 @@
 package com.gcoce.bc.ws.entities.beneficio;
 
-import com.gcoce.bc.ws.dto.agricultor.SolicitudDto;
-import com.gcoce.bc.ws.dto.agricultor.UpSolicitudDto;
+import com.gcoce.bc.ws.dto.beneficio.SolicitudDto;
+import com.gcoce.bc.ws.dto.beneficio.UpSolicitudDto;
 import com.gcoce.bc.ws.utils.Constants;
 import com.gcoce.bc.ws.utils.Fechas;
 import jakarta.persistence.*;
@@ -9,11 +9,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import org.hibernate.annotations.GenericGenerator;
 
-import java.io.Serializable;
 import java.util.Date;
-import java.util.UUID;
 
 /**
  * @author Gabriel Coc Estrada
@@ -24,15 +21,8 @@ import java.util.UUID;
 @Setter
 @ToString
 @Entity
-@Table(name = "solicitudes", schema = "beneficio_ws")
-public class Solicitud implements Serializable {
-
-   /* @Id
-    @GeneratedValue(generator = "UUID")
-    @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
-    @Column(name = "solicitud_id")
-    private UUID solicitudId;*/
-
+@Table(name = "solicitud", schema = "beneficio_ws")
+public class Solicitud {
     @Id
     @Column(name = "no_solicitud")
     private String noSolicitud;

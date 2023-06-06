@@ -5,11 +5,11 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 
 /**
  * @author Gabriel Coc Estrada
- * @since 20/05/2023
+ * @since 27/05/2023
  */
-@ResponseStatus(HttpStatus.NOT_ACCEPTABLE)
-public class BeneficioException extends RuntimeException {
-    public BeneficioException(String message) {
+@ResponseStatus(HttpStatus.NOT_FOUND)
+public class RecordNotFoundException extends RuntimeException {
+    public RecordNotFoundException(String message) {
         super(message);
     }
 }

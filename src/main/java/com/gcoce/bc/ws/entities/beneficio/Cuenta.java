@@ -1,15 +1,15 @@
 package com.gcoce.bc.ws.entities.beneficio;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.gcoce.bc.ws.utils.Constants;
+import com.gcoce.bc.ws.utils.Fechas;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import org.hibernate.annotations.GenericGenerator;
 
 import java.util.Date;
-import java.util.UUID;
 
 /**
  * @author Gabriel Coc Estrada
@@ -20,15 +20,8 @@ import java.util.UUID;
 @Setter
 @ToString
 @Entity
-@Table(name = "cuentas", schema = "beneficio_ws")
+@Table(name = "cuenta", schema = "beneficio_ws")
 public class Cuenta {
-
-    /*@Id
-    @GeneratedValue(generator = "UUID")
-    @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
-    @Column(name = "cuenta_id")
-    private UUID cuentaId;*/
-
     @Id
     @Column(name = "no_cuenta")
     private String noCuenta;
@@ -36,11 +29,10 @@ public class Cuenta {
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "no_solicitud")
     @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
-    //@Column(name = "no_solicitud")
     private Solicitud solicitud;
 
-    @Column(name = "estado_solicitud")
-    private Integer estadoSolicitud;
+    @Column(name = "estado_cuenta")
+    private Integer estadoCuenta;
 
     @Column(name = "user_created")
     private String userCreated;
@@ -56,5 +48,13 @@ public class Cuenta {
     @Column(name = "updated_at")
     private Date updatedAt;
 
-
+    public static Cuenta createdAccFromDto(String user, Solicitud solicitud) {
+        Cuenta cuenta = new Cuenta();
+        cuenta.setNoCuenta(Constants.generateAccount());
+        cuenta.setSolicitud(solicitud);
+        cuenta.setEstadoCuenta(Constants.CUENTA_CREADA);
+        cuenta.setUserCreated(user);
+        cuenta.setCreatedAt(Fechas.setTimeZoneDateGT(new Date()));
+        return cuenta;
+    }
 }

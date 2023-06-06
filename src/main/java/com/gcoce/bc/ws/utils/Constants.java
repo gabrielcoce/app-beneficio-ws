@@ -9,8 +9,8 @@ import org.apache.commons.lang3.RandomStringUtils;
 public class Constants {
 
     public static final String AUTHORIZATION = "Authorization";
-    public static final String SYSTEM_USER = "AP_MS_BENEFICIO_WS";
 
+    public static final String SYSTEM_USER = "AP_MS_BENEFICIO_WS";
 
     public static final Integer SOLICITUD_CREADA = 1;
 
@@ -22,29 +22,33 @@ public class Constants {
 
     public static final Integer CUENTA_ABIERTA = 5;
 
-    public static final Integer CUENTA_CERRADA = 6;
+    public static final Integer PESAJE_INICIADO = 6;
 
-    public static final Integer CUENTA_CONFIRMADA = 7;
+    public static final Integer PESAJE_FINALIZADO = 7;
 
-    public static final Integer PESAJE_INICIADO = 8;
+    public static final Integer CUENTA_CERRADA = 8;
 
-    public static final Integer PESAJE_FINALIZADO = 9;
+    public static final Integer CUENTA_CONFIRMADA = 9;
 
     public static final Integer TIPO_SOLICITUD_CC = 10;
 
-    public static final Integer TIPO_SOLICITUD_AP = 11;
+    public static final Integer TIPO_SOLICITUD_CP = 11;
 
-    public static final Integer TIPO_SOLICITUD_IP = 12;
+    public static final Integer TIPO_SOLICITUD_CT = 12;
 
-    public static final Integer TIPO_SOLICITUD_AT = 13;
+    public static final Integer TIPO_SOLICITUD_AP = 13;
 
-    public static final Integer TIPO_SOLICITUD_IT = 14;
+    public static final Integer TIPO_SOLICITUD_IP = 14;
+
+    public static final Integer TIPO_SOLICITUD_AT = 15;
+
+    public static final Integer TIPO_SOLICITUD_IT = 16;
 
     public static String generateManagement(Integer type) {
         return Fechas.getDateGuatemala() + generateTypeManagement(type) + generateRandomNumber();
     }
 
-    public static String generateAccount(){
+    public static String generateAccount() {
         return Fechas.getDateGuatemala() + "ACCOUNT" + generateRandomNumber();
     }
 
@@ -54,15 +58,21 @@ public class Constants {
                 return "CC";
             }
             case 11 -> {
-                return "AP";
+                return "CP";
             }
             case 12 -> {
-                return "IP";
+                return "CT";
             }
             case 13 -> {
-                return "AT";
+                return "AP";
             }
             case 14 -> {
+                return "IP";
+            }
+            case 15 -> {
+                return "AT";
+            }
+            case 16 -> {
                 return "IT";
             }
             default -> {

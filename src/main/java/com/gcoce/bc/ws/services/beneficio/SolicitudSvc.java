@@ -1,8 +1,9 @@
 package com.gcoce.bc.ws.services.beneficio;
 
-import com.gcoce.bc.ws.dto.agricultor.SolicitudDto;
+import com.gcoce.bc.ws.dto.beneficio.SolicitudDto;
 import com.gcoce.bc.ws.entities.beneficio.Solicitud;
 import com.gcoce.bc.ws.exceptions.BeneficioException;
+import com.gcoce.bc.ws.exceptions.RecordNotFoundException;
 import com.gcoce.bc.ws.payload.response.SuccessResponse;
 import com.gcoce.bc.ws.repositories.beneficio.SolicitudRepository;
 import org.springframework.http.HttpStatus;
@@ -31,24 +32,23 @@ public class SolicitudSvc {
 
     public ResponseEntity<?> createSolicitudSvc(SolicitudDto solicitudDto, String token) {
         String message;
-        //System.out.println(token);
         if (!authSvc.existsUserSvc(solicitudDto.getUsuarioSolicita())) {
-            throw new BeneficioException("Usuario no existe");
+            throw new BeneficioException("Usuario no existe.");
         }
 
         if (checkActiveReqSvc(solicitudDto.getUsuarioSolicita())) {
-            throw new BeneficioException("Usuario cuenta con una solicitud en proceso");
+            throw new BeneficioException("Usuario cuenta con una solicitud en proceso.");
         }
-        if (!authSvc.validateUserToken(token, solicitudDto.getUsuarioSolicita())) {
-            throw new BeneficioException("Usuario ingresado no corresponde a usuario logueado");
+        if (authSvc.validateUserToken(token, solicitudDto.getUsuarioSolicita())) {
+            throw new BeneficioException("Usuario ingresado no corresponde a usuario logueado.");
         }
         try {
             final Solicitud solicitud = Solicitud.createdReqFromDto(solicitudDto);
             solicitudRepository.save(solicitud);
-            message = String.format("Solicitud %s a sido registrada exitosamente", solicitud.getNoSolicitud());
-            return ResponseEntity.ok(new SuccessResponse(HttpStatus.OK, message, true));
+            message = String.format("Solicitud %s a sido registrada exitosamente.", solicitud.getNoSolicitud());
+            return ResponseEntity.ok(new SuccessResponse<>(HttpStatus.OK, message, true));
         } catch (BeneficioException e) {
-            throw new BeneficioException("No se pudo crear la solicitud");
+            throw new BeneficioException("No se pudo crear la solicitud.");
         }
     }
 
@@ -61,4 +61,8 @@ public class SolicitudSvc {
         return solicitudRepository.existsByNoSolicitud(noSolicitud);
     }
 
+    public Solicitud obtenerSolicitud(String noSolicitud) {
+        return solicitudRepository.getSolicitudByNoSolicitud(noSolicitud)
+                .orElseThrow(() -> new RecordNotFoundException("Solicitud no encontrada."));
+    }
 }

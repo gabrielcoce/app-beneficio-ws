@@ -136,7 +136,7 @@ public class AuthSvc {
             }
             userRepository.save(user);
             message = String.format("Usuario %s a sido registrado exitosamente ", user.getUsername());
-            return ResponseEntity.ok(new SuccessResponse(HttpStatus.OK, message));
+            return ResponseEntity.ok(new SuccessResponse<>(HttpStatus.OK, message));
         } catch (AuthBadRequestException e) {
             throw new AuthBadRequestException(e.getMessage());
         }
@@ -153,6 +153,11 @@ public class AuthSvc {
     public boolean validateUserToken(String bearerToken, String user){
         String token = bearerToken.substring(7);
         String userToken = jwtUtils.getUsernameFromToken(token);
-        return Validations.compareStrings(userToken, user);
+        return !Validations.compareStrings(userToken, user);
+    }
+
+    public String userFromToken(String bearerToken){
+        String token = bearerToken.substring(7);
+        return jwtUtils.getUsernameFromToken(token);
     }
 }

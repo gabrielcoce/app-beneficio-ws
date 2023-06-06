@@ -67,9 +67,10 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.cors(AbstractHttpConfigurer::disable).csrf().disable()
                 .exceptionHandling(e -> e.authenticationEntryPoint(unauthorizedHandler))
-                .authorizeHttpRequests(authorize -> authorize.requestMatchers("/api/auth/**").permitAll()
+                .authorizeHttpRequests(authorize -> authorize.requestMatchers("/api/beneficio/auth/**").permitAll()
                         .requestMatchers(AUTH_WHITELIST).permitAll()
                         .requestMatchers("/api/agricultor/**").hasAuthority("ROLE_AGRICULTOR")
+
                         .anyRequest().authenticated())
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
