@@ -48,4 +48,10 @@ public class ErrorResponse {
         this.message = message;
         this.path = path;
     }
+    public ErrorResponse(HttpStatus httpStatus, String message){
+        this();
+        this.status = httpStatus.value();
+        this.error = httpStatus.name();
+        this.message = message;
+    }
 }

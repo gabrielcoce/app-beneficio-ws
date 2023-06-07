@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 @Tag(name = "auth-controller", description = "Authentication Services")
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
-@RequestMapping(value = "/api/beneficio/auth", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = "/api/beneficio/auth")
 public class AuthController {
     private final AuthSvc authSvc;
 
@@ -32,5 +32,10 @@ public class AuthController {
     @PostMapping("/signup")
     public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequest signUpRequest) throws Exception {
         return authSvc.registerUserSvc(signUpRequest);
+    }
+    @Operation(summary = "Authentication User Hc", description = "Verificar Hc Token")
+    @GetMapping("/hc/{hCaptchaResponse}")
+    public ResponseEntity<?> getTokenHcaptcha(@PathVariable String hCaptchaResponse){
+        return authSvc.verifyHCaptcha(hCaptchaResponse);
     }
 }

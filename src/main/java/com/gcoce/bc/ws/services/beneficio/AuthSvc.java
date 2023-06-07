@@ -5,6 +5,8 @@ import com.gcoce.bc.ws.entities.beneficio.Role;
 import com.gcoce.bc.ws.entities.beneficio.User;
 import com.gcoce.bc.ws.entities.beneficio.UserDetailsImpl;
 import com.gcoce.bc.ws.exceptions.AuthBadRequestException;
+import com.gcoce.bc.ws.exceptions.BeneficioException;
+import com.gcoce.bc.ws.exceptions.HcException;
 import com.gcoce.bc.ws.payload.request.LoginRequest;
 import com.gcoce.bc.ws.payload.request.SignupRequest;
 import com.gcoce.bc.ws.payload.response.JwtResponse;
@@ -12,9 +14,13 @@ import com.gcoce.bc.ws.payload.response.SuccessResponse;
 import com.gcoce.bc.ws.repositories.beneficio.RoleRepository;
 import com.gcoce.bc.ws.repositories.beneficio.UserRepository;
 import com.gcoce.bc.ws.security.configurations.JwtManager;
+import com.gcoce.bc.ws.utils.HcaptchaError;
 import com.gcoce.bc.ws.utils.Validations;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -25,8 +31,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional(transactionManager = "beneficioTransactionManager")
@@ -36,8 +42,19 @@ public class AuthSvc {
     private final RoleRepository roleRepository;
     private final AuthenticationManager authenticationManager;
     private final JwtManager jwtUtils;
-
     private final UserDetailsSvcImpl userDetailsService;
+
+    @Autowired
+    RestTemplateBuilder restTemplateBuilder;
+
+    @Value("${hcaptcha.verify.url}")
+    private String hCaptchaVerifyUrl;
+
+    @Value("${hcaptcha.verify.secret}")
+    private String hCaptchaVerifySecret;
+
+    @Value("${hcaptcha.user}")
+    private String hCaptchaUser;
     private static final Logger logger = LoggerFactory.getLogger(AuthSvc.class);
 
     public AuthSvc(UserRepository userRepository, RoleRepository roleRepository,
@@ -49,6 +66,32 @@ public class AuthSvc {
         this.jwtUtils = jwtUtils;
         this.userDetailsService = userDetailsService;
 
+    }
+
+    public ResponseEntity<?> verifyHCaptcha(String hCaptchaResponse) {
+
+        Map<String, String> body = new HashMap<>();
+        String errorMessage;
+        body.put("secret", hCaptchaVerifySecret);
+        body.put("response", hCaptchaResponse);
+        logger.debug("Request body for hcaptcha: {}", body);
+        ResponseEntity<Map> responseEntity = restTemplateBuilder.build().postForEntity(hCaptchaVerifyUrl + "?secret={secret}&response={response}", body, Map.class, body);
+        logger.debug("Response from hcaptcha: {}", responseEntity);
+        Map responseBody = responseEntity.getBody();
+        boolean hcaptchaSuccess = (Boolean) Objects.requireNonNull(responseBody).get("success");
+        if (!hcaptchaSuccess) {
+            List<String> errorCodes = (List) responseBody.get("error-codes");
+            if (errorCodes != null) {
+                errorMessage= errorCodes.stream().map(HcaptchaError.HCAPTCHA_ERROR_CODE::get)
+                        .collect(Collectors.joining(", "));
+            } else {
+                errorMessage = "Token ya fue utilizado, por favor intente de nuevo.";
+            }
+            throw new HcException(errorMessage);
+        }
+        final UserDetailsImpl userDetails = (UserDetailsImpl) userDetailsService.loadUserByUsername(hCaptchaUser);
+        final String jwt = jwtUtils.generateToken(userDetails);
+        return ResponseEntity.ok(new JwtResponse(jwt));
     }
 
     public ResponseEntity<?> authenticateUserSvc(LoginRequest loginRequest) throws AuthBadRequestException {
@@ -111,7 +154,7 @@ public class AuthSvc {
                             roles.add(beneficioRole);
                         }
                         case "agricultor" -> {
-                                Role agricultorRole = roleRepository.findByName(ERole.ROLE_AGRICULTOR)
+                            Role agricultorRole = roleRepository.findByName(ERole.ROLE_AGRICULTOR)
                                     .orElseThrow(() -> new AuthBadRequestException("Role is not found."));
                             roles.add(agricultorRole);
                         }
@@ -144,21 +187,21 @@ public class AuthSvc {
         }
     }
 
-    public boolean existsUserSvc(String user){
+    public boolean existsUserSvc(String user) {
         return userRepository.existsByUsername(user);
     }
 
-    public boolean existsEmailSvc(String email){
+    public boolean existsEmailSvc(String email) {
         return userRepository.existsByEmail(email);
     }
 
-    public boolean validateUserToken(String bearerToken, String user){
+    public boolean validateUserToken(String bearerToken, String user) {
         String token = bearerToken.substring(7);
         String userToken = jwtUtils.getUsernameFromToken(token);
         return !Validations.compareStrings(userToken, user);
     }
 
-    public String userFromToken(String bearerToken){
+    public String userFromToken(String bearerToken) {
         String token = bearerToken.substring(7);
         return jwtUtils.getUsernameFromToken(token);
     }
