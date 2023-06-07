@@ -1,5 +1,6 @@
 package com.gcoce.bc.ws.controllers.beneficio;
 
+import com.gcoce.bc.ws.dto.beneficio.ActualizarSolicitudDto;
 import com.gcoce.bc.ws.dto.beneficio.SolicitudDto;
 import com.gcoce.bc.ws.services.beneficio.SolicitudSvc;
 import com.gcoce.bc.ws.utils.Constants;
@@ -27,5 +28,10 @@ public class SolicitudController {
     @PostMapping("/crear-solicitud")
     public ResponseEntity<?> createSolicitud(@Valid @RequestBody SolicitudDto solicitudDto, @RequestHeader(value = Constants.AUTHORIZATION, required = false) String token) {
         return solicitudSvc.createSolicitudSvc((solicitudDto), token);
+    }
+
+    @PostMapping("/actualizar-solicitud")
+    public ResponseEntity<?> actualizarSolicitud(@Valid @RequestBody ActualizarSolicitudDto solicitudDto ) {
+        return solicitudSvc.updateSolicitud((solicitudDto));
     }
 }

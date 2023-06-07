@@ -1,6 +1,8 @@
 package com.gcoce.bc.ws.services.beneficio;
 
+import com.gcoce.bc.ws.dto.beneficio.ActualizarCuentaDto;
 import com.gcoce.bc.ws.dto.beneficio.ParcialidadDto;
+import com.gcoce.bc.ws.dto.beneficio.VerificarParcialidadDto;
 import com.gcoce.bc.ws.entities.beneficio.Cuenta;
 import com.gcoce.bc.ws.entities.beneficio.Parcialidad;
 import com.gcoce.bc.ws.exceptions.BeneficioException;
@@ -15,6 +17,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Date;
 
 /**
  * @author Gabriel Coc Estrada
@@ -134,5 +138,23 @@ public class ParcialidadSvc {
     public boolean lastParcialidad(Integer parcialidadRegistrada, Integer parcialidadIngresada) {
         int parcialidadRestante = parcialidadRegistrada - parcialidadIngresada;
         return parcialidadRestante == 1;
+    }
+
+    public  ResponseEntity<?> verificarParcialidad(VerificarParcialidadDto parcialidadDto) {
+        String message;
+        Parcialidad parcialidad = new Parcialidad();
+        parcialidad = parcialidadRepository.findById(parcialidadDto.getParcialidadId()).orElse(null);
+
+        if (parcialidad != null) {
+            parcialidad.setVerified(true);
+            parcialidad.setUserUpdated(parcialidadDto.getUserUpdated());
+            parcialidad.setUpdatedAt(new Date());
+            parcialidadRepository.save(parcialidad);
+            message = String.format("Se verifico correctamente la parcialidad");
+            return ResponseEntity.ok(new SuccessResponse<>(HttpStatus.OK, message, true));
+        } else {
+            message = String.format("No se encontro ninguna parcialidad para verificar");
+            throw new BeneficioException(message);
+        }
     }
 }

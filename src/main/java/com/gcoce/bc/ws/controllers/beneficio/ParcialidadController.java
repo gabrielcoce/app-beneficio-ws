@@ -1,6 +1,8 @@
 package com.gcoce.bc.ws.controllers.beneficio;
 
+import com.gcoce.bc.ws.dto.beneficio.ActualizarCuentaDto;
 import com.gcoce.bc.ws.dto.beneficio.ParcialidadDto;
+import com.gcoce.bc.ws.dto.beneficio.VerificarParcialidadDto;
 import com.gcoce.bc.ws.services.beneficio.ParcialidadSvc;
 import com.gcoce.bc.ws.utils.Constants;
 import jakarta.validation.Valid;
@@ -22,5 +24,10 @@ public class ParcialidadController {
     @PostMapping("/crear-parcialidad")
     public ResponseEntity<?> createParcialidad(@Valid @RequestBody ParcialidadDto parcialidadDto, @RequestHeader(value = Constants.AUTHORIZATION, required = false) String token){
         return parcialidadSvc.createParcialidadSvc(parcialidadDto, token);
+    }
+
+    @PostMapping("/verificar-parcialidad")
+    public ResponseEntity<?> actualizarParcialidad(@Valid @RequestBody VerificarParcialidadDto parcialidadDto) {
+        return parcialidadSvc.verificarParcialidad((parcialidadDto));
     }
 }

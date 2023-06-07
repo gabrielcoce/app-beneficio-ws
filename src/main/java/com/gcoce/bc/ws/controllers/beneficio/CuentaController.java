@@ -1,5 +1,7 @@
 package com.gcoce.bc.ws.controllers.beneficio;
 
+import com.gcoce.bc.ws.dto.beneficio.ActualizarCuentaDto;
+import com.gcoce.bc.ws.dto.beneficio.ActualizarSolicitudDto;
 import com.gcoce.bc.ws.dto.beneficio.CuentaDto;
 import com.gcoce.bc.ws.services.beneficio.CuentaSvc;
 import com.gcoce.bc.ws.utils.Constants;
@@ -26,5 +28,10 @@ public class CuentaController {
     @PostMapping("/crear-cuenta")
     public ResponseEntity<?> crearCuenta(@Valid @RequestBody CuentaDto cuentaDto, @RequestHeader(value = Constants.AUTHORIZATION, required = false) String token) {
         return cuentaSvc.crearCuentaSvc(cuentaDto, token);
+    }
+
+    @PostMapping("/actualizar-cuenta")
+    public ResponseEntity<?> actualizarCuenta(@Valid @RequestBody ActualizarCuentaDto cuentaDto) {
+        return cuentaSvc.updateCuenta((cuentaDto));
     }
 }

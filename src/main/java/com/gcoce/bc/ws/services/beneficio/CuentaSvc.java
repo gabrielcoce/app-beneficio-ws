@@ -1,5 +1,6 @@
 package com.gcoce.bc.ws.services.beneficio;
 
+import com.gcoce.bc.ws.dto.beneficio.ActualizarCuentaDto;
 import com.gcoce.bc.ws.dto.beneficio.CuentaDto;
 import com.gcoce.bc.ws.entities.beneficio.Cuenta;
 import com.gcoce.bc.ws.entities.beneficio.Solicitud;
@@ -77,5 +78,23 @@ public class CuentaSvc {
     public boolean updateEstadoCuenta(String noCuenta, Integer status, String user) {
         Integer estado = cuentaRepository.putEstadoCuenta(noCuenta, status, user);
         return estado != 0;
+    }
+
+    public  ResponseEntity<?> updateCuenta(ActualizarCuentaDto cuentaDto) {
+        String message;
+        Cuenta cuenta = new Cuenta();
+        cuenta = cuentaRepository.findById(cuentaDto.getNoCuenta()).orElse(null);
+
+        if (cuenta != null) {
+            cuenta.setNoCuenta(cuentaDto.getNoCuenta());
+            cuenta.setUserUpdated(cuentaDto.getUserUpdated());
+            cuenta.setUpdatedAt(new Date());
+            cuentaRepository.save(cuenta);
+            message = String.format("Se actualizo correctamente la cuenta");
+            return ResponseEntity.ok(new SuccessResponse<>(HttpStatus.OK, message, true));
+        } else {
+            message = String.format("No se encontro ninguna cuenta para actualizar");
+            throw new BeneficioException(message);
+        }
     }
 }

@@ -23,11 +23,13 @@ import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashSet;
 import java.util.Set;
 
 @Service
+@Transactional(transactionManager = "beneficioTransactionManager")
 public class AuthSvc {
     private final UserRepository userRepository;
     private final PasswordEncoder encoder;
@@ -109,7 +111,7 @@ public class AuthSvc {
                             roles.add(beneficioRole);
                         }
                         case "agricultor" -> {
-                            Role agricultorRole = roleRepository.findByName(ERole.ROLE_AGRICULTOR)
+                                Role agricultorRole = roleRepository.findByName(ERole.ROLE_AGRICULTOR)
                                     .orElseThrow(() -> new AuthBadRequestException("Role is not found."));
                             roles.add(agricultorRole);
                         }
