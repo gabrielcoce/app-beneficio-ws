@@ -58,7 +58,7 @@ public class BeneficioController {
     @PutMapping("/solicitud/actualizar-solicitud")
     @PreAuthorize("hasRole('BENEFICIO')")
     public ResponseEntity<?> actualizarSolicitud(@Valid @RequestBody ActualizarSolicitudDto solicitudDto, @RequestHeader(value = Constants.AUTHORIZATION, required = false) String token) {
-        return solicitudSvc.updateSolicitud(solicitudDto, token);
+        return solicitudSvc.updateSolicitudSvc(solicitudDto, token);
     }
 
     @Operation(summary = "Beneficio Cuenta", description = "Método para actualizar estado cuenta")

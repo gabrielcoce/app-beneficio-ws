@@ -56,7 +56,7 @@ public class SolicitudSvc {
         }
     }
 
-    public ResponseEntity<?> updateSolicitud(ActualizarSolicitudDto solicitudDto, String token) {
+    public ResponseEntity<?> updateSolicitudSvc(ActualizarSolicitudDto solicitudDto, String token) {
         String message;
         String user;
         Solicitud solicitud;
