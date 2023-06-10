@@ -6,13 +6,13 @@ import com.gcoce.bc.ws.services.beneficio.UserDetailsSvcImpl;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -65,12 +65,13 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http.cors(AbstractHttpConfigurer::disable).csrf().disable()
+        http.cors().disable().csrf().disable()
                 .exceptionHandling(e -> e.authenticationEntryPoint(unauthorizedHandler))
                 .authorizeHttpRequests(authorize -> authorize.requestMatchers("/api/beneficio/auth/**").permitAll()
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers(AUTH_WHITELIST).permitAll()
-                        .requestMatchers("/api/agricultor/**").hasAuthority("ROLE_AGRICULTOR")
-
+                        .requestMatchers("/api/beneficio-agricultor/**").hasAuthority("ROLE_AGRICULTOR")
+                        .requestMatchers("/api/beneficio-peso-cabal/**").hasAuthority("ROLE_PESO_CABAL")
                         .anyRequest().authenticated())
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
@@ -87,12 +88,12 @@ public class SecurityConfig {
         corsConfig.applyPermitDefaultValues();
         corsConfig.setAllowCredentials(true);
         corsConfig.setAllowedOrigins(List.of("*"));
-        corsConfig.setAllowedMethods(Arrays.asList("GET", "POST", "PATCH", "PUT", "DELETE", "OPTIONS", "HEAD"));
-        corsConfig.setAllowedHeaders(Arrays.asList("Authorization", "Requester-Type"));
-        corsConfig.setExposedHeaders(List.of("X-Get-Header"));
+        corsConfig.setAllowedMethods(Arrays.asList("GET", "POST", "PATCH", "PUT", "DELETE"));
+        corsConfig.setAllowedHeaders(List.of("Authorization", "Content-Type"));
+        corsConfig.setExposedHeaders(List.of("*"));
         corsConfig.addAllowedOrigin("*");
         corsConfig.addAllowedHeader("*");
-        corsConfig.addAllowedMethod("*");
+        corsConfig.addAllowedMethod("GET, POST, DELETE, PUT, PATCH");
         corsConfig.setMaxAge(3600L);
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", corsConfig);

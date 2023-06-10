@@ -3,6 +3,7 @@ package com.gcoce.bc.ws.payload.response;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 import org.springframework.http.HttpStatus;
 
 import java.util.Date;
@@ -10,6 +11,7 @@ import java.util.List;
 
 @Setter
 @Getter
+@ToString
 public class ErrorResponse {
     // customizing timestamp serialization format
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "America/Guatemala")

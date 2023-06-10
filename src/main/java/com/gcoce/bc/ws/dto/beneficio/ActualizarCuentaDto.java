@@ -18,9 +18,9 @@ public class ActualizarCuentaDto {
     @NotNull
     private String noCuenta;
 
-    @NotBlank
+    /*@NotBlank
     @NotNull
-    private String userUpdated;
+    private String userUpdated;*/
 
     @NotNull
     private Integer nuevoEstado;

@@ -51,7 +51,7 @@ public class CuentaSvc {
             message = String.format("La cuenta no puede ser creada porque la solicitud %s no a sido aprobada.", solicitud.getNoSolicitud());
             throw new BeneficioException(message);
         }
-        if(!Objects.equals(solicitud.getEstadoSolicitud(), Constants.TIPO_SOLICITUD_CC)){
+        if (!Objects.equals(solicitud.getEstadoSolicitud(), Constants.TIPO_SOLICITUD_CC)) {
             message = String.format("La cuenta no puede ser creada porque la solicitud %s no corresponde a creación de cuenta.", solicitud.getNoSolicitud());
             throw new BeneficioException(message);
         }
@@ -67,6 +67,25 @@ public class CuentaSvc {
         return ResponseEntity.ok(new SuccessResponse<>(HttpStatus.OK, message, true));
     }
 
+    public ResponseEntity<?> updateCuentaSvc(ActualizarCuentaDto cuentaDto, String token) {
+        String message;
+        String user;
+        Cuenta cuenta;
+        cuenta = cuentaRepository.findById(cuentaDto.getNoCuenta()).orElse(null);
+        if (cuenta != null) {
+            user = authSvc.userFromToken(token);
+            cuenta.setEstadoCuenta(cuentaDto.getNuevoEstado());
+            cuenta.setUserUpdated(user);
+            cuenta.setUpdatedAt(new Date());
+            cuentaRepository.save(cuenta);
+            message = String.format("Se actualizo correctamente la cuenta %s", cuentaDto.getNoCuenta());
+            return ResponseEntity.ok(new SuccessResponse<>(HttpStatus.OK, message, true));
+        } else {
+            message = String.format("No se encontró ninguna cuenta %s para actualizar", cuentaDto.getNoCuenta());
+            throw new BeneficioException(message);
+        }
+    }
+
     public Cuenta obtenerCuenta(String noCuenta) {
         return cuentaRepository.getCuentaByNoCuenta(noCuenta).orElseThrow(() -> new RecordNotFoundException("Cuenta no encontrada"));
     }
@@ -78,23 +97,5 @@ public class CuentaSvc {
     public boolean updateEstadoCuenta(String noCuenta, Integer status, String user) {
         Integer estado = cuentaRepository.putEstadoCuenta(noCuenta, status, user);
         return estado != 0;
-    }
-
-    public  ResponseEntity<?> updateCuenta(ActualizarCuentaDto cuentaDto) {
-        String message;
-        Cuenta cuenta = new Cuenta();
-        cuenta = cuentaRepository.findById(cuentaDto.getNoCuenta()).orElse(null);
-
-        if (cuenta != null) {
-            cuenta.setNoCuenta(cuentaDto.getNoCuenta());
-            cuenta.setUserUpdated(cuentaDto.getUserUpdated());
-            cuenta.setUpdatedAt(new Date());
-            cuentaRepository.save(cuenta);
-            message = String.format("Se actualizo correctamente la cuenta");
-            return ResponseEntity.ok(new SuccessResponse<>(HttpStatus.OK, message, true));
-        } else {
-            message = String.format("No se encontro ninguna cuenta para actualizar");
-            throw new BeneficioException(message);
-        }
     }
 }

@@ -58,7 +58,7 @@ public class ParcialidadSvc {
         pesoIngresado = parcialidadRepository.checkPesoIngresado(parcialidadDto.getNoCuenta());
         pesoResultante = pesoRestante(cuentaProjection.getPesoTotal(), pesoIngresado);
         parcialidadIngresada = parcialidadRepository.checkParcialidadesByNoCuenta(parcialidadDto.getNoCuenta());
-        user =  authSvc.userFromToken(token);
+        user = authSvc.userFromToken(token);
         //logger.info("no cuenta " + cuentaProjection.getNoCuenta());
         logger.info("estado cuenta " + cuentaProjection.getEstadoCuenta());
         logger.info("cantidad de peso registrado " + cuentaProjection.getPesoTotal());
@@ -111,6 +111,25 @@ public class ParcialidadSvc {
         return ResponseEntity.ok(new SuccessResponse<>(HttpStatus.OK, "Parcialidad creada exitosamente.", true));
     }
 
+    public ResponseEntity<?> verificarParcialidadSvc(VerificarParcialidadDto parcialidadDto, String token) {
+        String message;
+        String user;
+        Parcialidad parcialidad;
+        parcialidad = parcialidadRepository.findById(parcialidadDto.getParcialidadId()).orElse(null);
+        if (parcialidad != null) {
+            user = authSvc.userFromToken(token);
+            parcialidad.setVerified(true);
+            parcialidad.setUserUpdated(user);
+            parcialidad.setUpdatedAt(new Date());
+            parcialidadRepository.save(parcialidad);
+            message = "Se verifico correctamente la parcialidad";
+            return ResponseEntity.ok(new SuccessResponse<>(HttpStatus.OK, message, true));
+        } else {
+            message = "No se encontró ninguna parcialidad para verificar";
+            throw new BeneficioException(message);
+        }
+    }
+
     public boolean allowRegisterParcialidad(Integer parcialidadIngresada, Integer parcialidadRegistrada) {
         return parcialidadIngresada >= parcialidadRegistrada;
     }
@@ -138,23 +157,5 @@ public class ParcialidadSvc {
     public boolean lastParcialidad(Integer parcialidadRegistrada, Integer parcialidadIngresada) {
         int parcialidadRestante = parcialidadRegistrada - parcialidadIngresada;
         return parcialidadRestante == 1;
-    }
-
-    public  ResponseEntity<?> verificarParcialidad(VerificarParcialidadDto parcialidadDto) {
-        String message;
-        Parcialidad parcialidad = new Parcialidad();
-        parcialidad = parcialidadRepository.findById(parcialidadDto.getParcialidadId()).orElse(null);
-
-        if (parcialidad != null) {
-            parcialidad.setVerified(true);
-            parcialidad.setUserUpdated(parcialidadDto.getUserUpdated());
-            parcialidad.setUpdatedAt(new Date());
-            parcialidadRepository.save(parcialidad);
-            message = String.format("Se verifico correctamente la parcialidad");
-            return ResponseEntity.ok(new SuccessResponse<>(HttpStatus.OK, message, true));
-        } else {
-            message = String.format("No se encontro ninguna parcialidad para verificar");
-            throw new BeneficioException(message);
-        }
     }
 }

@@ -1,7 +1,6 @@
 package com.gcoce.bc.ws.entities.beneficio;
 
 import com.gcoce.bc.ws.dto.beneficio.SolicitudDto;
-import com.gcoce.bc.ws.dto.beneficio.UpSolicitudDto;
 import com.gcoce.bc.ws.utils.Constants;
 import com.gcoce.bc.ws.utils.Fechas;
 import jakarta.persistence.*;
@@ -66,14 +65,6 @@ public class Solicitud {
         solicitud.setCantidadParcialidades(solicitudDto.getCantidadParcialidades());
         solicitud.setUserCreated(Constants.SYSTEM_USER);
         solicitud.setCreatedAt(Fechas.setTimeZoneDateGT(new Date()));
-        return solicitud;
-    }
-
-    public static Solicitud updatedFromDto(UpSolicitudDto upSolicitudDto, Integer status) {
-        Solicitud solicitud = new Solicitud();
-        solicitud.setEstadoSolicitud(status);
-        solicitud.setUserUpdated(upSolicitudDto.getUserLogin());
-        solicitud.setUpdatedAt(Fechas.setTimeZoneDateGT(new Date()));
         return solicitud;
     }
 }

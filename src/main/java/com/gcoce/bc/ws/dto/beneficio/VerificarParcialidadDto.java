@@ -15,7 +15,7 @@ public class VerificarParcialidadDto {
     @NotNull
     private UUID parcialidadId;
 
-    @NotBlank
+    /*@NotBlank
     @NotNull
-    private String userUpdated;
+    private String userUpdated;*/
 }

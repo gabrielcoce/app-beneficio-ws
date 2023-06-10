@@ -44,13 +44,11 @@ public class JwtManager {
 
     public String generateToken(UserDetailsImpl userDetails) {
         Map<String, Object> claims = new HashMap<>();
-        String userId = userDetails.getUserId().toString();
-        claims.put("userid", userId);
         claims.put("username", userDetails.getUsername());
-        claims.put("role", userDetails.getAuthorities().stream().map(s -> s.toString()).collect(Collectors.toList()));
+        claims.put("role", userDetails.getAuthorities().stream().map(Object::toString).collect(Collectors.toList()));
         return Jwts.builder().setClaims(claims).setSubject(userDetails.getUsername())
                 .setIssuedAt(new Date())
-                .setExpiration(new Date(new Date().getTime() + jwtExpirationMs * 1000)).signWith(key).compact();
+                .setExpiration(new Date(new Date().getTime() + jwtExpirationMs * 1000L)).signWith(key).compact();
     }
 
     public Boolean validateToken(String token, UserDetailsImpl userDetails) {

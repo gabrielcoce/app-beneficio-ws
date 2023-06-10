@@ -5,7 +5,7 @@ package com.gcoce.bc.ws.projections.beneficio;
  * @since 29/05/2023
  */
 public interface CuentaProjection {
-    public String getNoCuenta();
+    //public String getNoCuenta();
 
     public Integer getEstadoCuenta();
 

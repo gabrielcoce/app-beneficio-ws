@@ -18,9 +18,9 @@ public class ActualizarSolicitudDto {
     @NotNull
     private String noSolicitud;
 
-    @NotBlank
+    /*@NotBlank
     @NotNull
-    private String userUpdated;
+    private String userUpdated;*/
 
     @NotNull
     private Integer nuevoEstado;
